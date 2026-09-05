@@ -1,0 +1,142 @@
+.footer {
+  position: relative;
+  padding: 6rem 0 0;
+  background: transparent;
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  padding-bottom: 3rem;
+  align-items: start;
+}
+
+.footer-title {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+  background: var(--title-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.footer-desc {
+  font-size: clamp(0.85rem, 1.8vw, 1rem);
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+  max-width: 480px;
+}
+
+.footer-author-credit {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-color);
+  margin-bottom: 1.2rem;
+  font-family: monospace;
+}
+
+.footer-social-icons {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.social-icon-btn {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--card-border);
+  border-radius: var(--cyber-radius);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.social-icon-btn:hover {
+  border-color: var(--accent-color);
+  background: var(--accent-soft);
+  color: var(--accent-color);
+}
+
+.social-icon-btn img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+/* Card "Sobre o Desenvolvedor" (padrão da referência) */
+.developer-about-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--cyber-radius);
+  padding: 1.2rem;
+  margin-top: 1rem;
+  overflow: hidden;
+}
+
+.developer-about-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
+}
+
+.developer-about-header h4 {
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent-color);
+}
+
+.close-about-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.3rem;
+}
+
+.close-about-btn:hover {
+  color: var(--accent-color);
+}
+
+.developer-about-text {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  font-family: monospace;
+}
+
+.footer-bottom {
+  padding: 1.5rem 0;
+}
+
+.footer-bottom-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-copyright-text {
+  font-size: 0.75rem;
+  color: #86efac; /* verde claro no modo escuro */
+  text-align: center;
+}
+
+html.light-theme .footer-copyright-text {
+  color: #15803d; /* verde no modo claro */
+}
+
+@media (max-width: 768px) {
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}

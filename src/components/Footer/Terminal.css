@@ -1,0 +1,233 @@
+.covid-terminal {
+  background: rgba(4, 8, 6, 0.9);
+  border: 1px solid var(--card-border);
+  border-radius: var(--cyber-radius);
+  overflow: hidden;
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  transition: border-color 0.3s ease;
+  width: 100%;
+}
+
+html.light-theme .covid-terminal {
+  background: rgba(250, 255, 251, 0.95);
+  border-color: rgba(21, 128, 61, 0.15);
+}
+
+.covid-terminal:hover,
+.covid-terminal:focus-within {
+  border-color: var(--accent-color);
+}
+
+.covid-terminal *:focus-visible {
+  outline: none;
+}
+
+.terminal-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1rem;
+  background: rgba(0, 0, 0, 0.35);
+  border-bottom: 1px solid var(--card-border);
+}
+
+html.light-theme .terminal-header {
+  background: rgba(240, 253, 244, 0.7);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dot.red { background: #ff5f56; }
+.dot.yellow { background: #ffbd2e; }
+.dot.green { background: #27c93f; }
+
+.terminal-label {
+  margin-left: 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+}
+
+.shell-selector {
+  display: flex;
+  padding: 0.5rem;
+  gap: 0.3rem;
+  border-bottom: 1px solid var(--card-border);
+}
+
+html.light-theme .shell-selector {
+  background: rgba(240, 253, 244, 0.6);
+}
+
+.shell-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.8rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--cyber-radius);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: var(--transition);
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+}
+
+.shell-btn:hover {
+  border-color: var(--card-border);
+  color: var(--text-primary);
+}
+
+.shell-btn.active {
+  background: var(--accent-soft);
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+.terminal-content {
+  padding: 1rem;
+  max-height: 300px;
+  overflow-y: auto;
+  cursor: text;
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+
+
+.terminal-line {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.terminal-input {
+  color: var(--text-primary);
+}
+
+.terminal-success {
+  color: #86efac;
+}
+
+html.light-theme .terminal-success {
+  color: #15803d;
+}
+
+.terminal-error {
+  color: #f87171;
+}
+
+html.light-theme .terminal-error {
+  color: #dc2626;
+}
+
+.terminal-info {
+  color: #7dd3fc;
+}
+
+html.light-theme .terminal-info {
+  color: #0284c7;
+}
+
+.terminal-output {
+  color: var(--text-secondary);
+}
+
+html.light-theme .terminal-output {
+  color: #3f5c4c;
+}
+
+.terminal-input-line {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.3rem;
+}
+
+.terminal-prompt {
+  color: var(--accent-color);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.terminal-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 0.75rem;
+  padding: 0;
+}
+
+.terminal-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+.terminal-cursor {
+  width: 7px;
+  height: 14px;
+  background: var(--accent-color);
+  animation: term-blink 1s step-end infinite;
+  flex-shrink: 0;
+}
+
+@keyframes term-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.terminal-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.6rem 1rem 1rem;
+  border-top: 1px solid var(--card-border);
+}
+
+.terminal-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.6rem;
+  background: var(--accent-soft);
+  border: 1px solid var(--card-border);
+  border-radius: var(--cyber-radius);
+  color: var(--accent-color);
+  cursor: pointer;
+  font-size: 0.62rem;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  transition: var(--transition);
+}
+
+.terminal-chip:hover {
+  border-color: var(--accent-color);
+  background: var(--accent-soft);
+}
+
+.terminal-chip svg {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .terminal-content {
+    min-height: 180px;
+    max-height: 280px;
+    font-size: 0.7rem;
+  }
+
+  .terminal-input {
+    font-size: 0.7rem;
+  }
+}
