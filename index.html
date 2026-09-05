@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pt-BR" translate="no">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/r-introduction.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0a0a12" />
+    <meta name="google" content="notranslate" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>COVID Goiânia | Dashboard</title>
+    <meta name="description" content="Análise de dados de casos e óbitos de COVID-19 em Goiânia (2021) - Importação, limpeza e visualização" />
+    <script>
+      // Aplica o tema salvo ANTES do primeiro paint, evitando o flash de fundo
+      // (escuro → claro) ao recarregar a página no modo claro.
+      // O script NÃO toca em backgroundColor nem em <meta name="theme-color">.
+      try {
+        if (localStorage.getItem('theme') === 'light') {
+          document.documentElement.classList.add('light-theme');
+        }
+      } catch (e) {}
+    </script>
+    <!-- Fundo do <html> antes do CSS principal chegar (anti-flash de branco no dev):
+         declarativo em CSS, sem JavaScript. Valores iguais aos do global.css. -->
+    <style>
+      html { background-color: #0a0a12; }
+      html.light-theme { background-color: #f0fdf4; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
