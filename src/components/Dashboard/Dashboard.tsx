@@ -25,14 +25,14 @@ import { Chart, SerieLine, SerieStacked, type ChartType } from './charts';
 import './Dashboard.css';
 
 const metricColorsDark: Record<Metric, string> = {
-  casosAcumulados: '#16a34a',
+  casosAcumulados: '#06b6d4',
   casosNovos: '#22d3ee',
   obitosAcumulados: '#f87171',
   obitosNovos: '#fbbf24',
 };
 
 const metricColorsLight: Record<Metric, string> = {
-  casosAcumulados: '#15803d',
+  casosAcumulados: '#0891b2',
   casosNovos: '#0284c7',
   obitosAcumulados: '#dc2626',
   obitosNovos: '#d97706',
@@ -96,7 +96,7 @@ const Dashboard = () => {
   const serieColors = useMemo<Record<string, string>>(
     () => ({
       ...regionColors,
-      default: isLight ? '#4ade80' : '#16a34a',
+      default: isLight ? '#67e8f9' : '#06b6d4',
     }),
     [isLight],
   );
@@ -413,7 +413,7 @@ const Dashboard = () => {
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
                 >
-                  <label className="control-label">{t('dashboard.regiao')}</label>
+                  <span className="control-label">{t('dashboard.regiao')}</span>
                   <div className="control-buttons secondary-btns">
                     {REGIOES.map((reg) => (
                       <button
@@ -435,14 +435,14 @@ const Dashboard = () => {
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
                 >
-                  <label className="control-label">
+                  <span className="control-label">
                     {t('dashboard.uf')}
                     {filtros.regioes.length > 0 && (
                       <span className="control-hint">
                         {t('dashboard.uf_dependente_regiao', { regioes: filtros.regioes.join(', ') })}
                       </span>
                     )}
-                  </label>
+                  </span>
                   <div className="control-buttons secondary-btns uf-btns">
                     {ufsDisponiveis.map((uf) => (
                       <button
@@ -464,7 +464,7 @@ const Dashboard = () => {
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
                 >
-                  <label className="control-label">{t('dashboard.metro_interior')}</label>
+                  <span className="control-label">{t('dashboard.metro_interior')}</span>
                   <div className="control-buttons secondary-btns">
                     {METRO_INTERIOR_OPCOES.map((op) => (
                       <button
@@ -481,7 +481,7 @@ const Dashboard = () => {
 
               <div className="controls-grid">
                 <div className="control-group">
-                  <label className="control-label">{t('dashboard.metric')} <span className="hint">(multi)</span></label>
+                  <span className="control-label">{t('dashboard.metric')} <span className="hint">(multi)</span></span>
                   <div className="control-buttons">
                     {METRICS.map((m) => (
                       <button key={m} className={`control-btn ${metrics.includes(m) ? 'active' : ''}`} onClick={() => toggleMetric(m)}>
@@ -493,7 +493,7 @@ const Dashboard = () => {
                 </div>
 
                 <div className="control-group">
-                  <label className="control-label">{t('dashboard.chart')}</label>
+                  <span className="control-label">{t('dashboard.chart')}</span>
                   <div className="control-buttons chart-type-btns">
                     {[
                       { type: 'bar' as ChartType, icon: <BarChart3 size={15} /> },
@@ -633,7 +633,7 @@ const Dashboard = () => {
               </div>
               <div className="controls-grid">
                 <div className="control-group">
-                  <label className="control-label">{t('dashboard.escopo')}</label>
+                  <span className="control-label">{t('dashboard.escopo')}</span>
                   <div className="control-buttons">
                     <button className={`control-btn ${escopo === 'goiania' ? 'active' : ''}`} onClick={() => setEscopo('goiania')}>
                       {t('dashboard.goiania')}
@@ -648,7 +648,7 @@ const Dashboard = () => {
                 </div>
 
                 <div className="control-group">
-                  <label className="control-label">{t('dashboard.metric')}</label>
+                  <span className="control-label">{t('dashboard.metric')}</span>
                   <div className="control-buttons">
                     {METRICS.map((m) => (
                       <button key={m} className={`control-btn ${serieMetrica === m ? 'active' : ''}`} onClick={() => setSerieMetrica(m)}>
@@ -660,7 +660,7 @@ const Dashboard = () => {
                 </div>
 
                 <div className="control-group">
-                  <label className="control-label">{t('dashboard.chart')}</label>
+                  <span className="control-label">{t('dashboard.chart')}</span>
                   <div className="control-buttons">
                     <button className={`control-btn ${serieTipo === 'linha' ? 'active' : ''}`} onClick={() => setSerieTipo('linha')}>
                       <GitCompare size={15} /> {t('dashboard.linha')}
@@ -678,7 +678,7 @@ const Dashboard = () => {
 
               {escopo === 'regioes' && (
                 <div className="secondary-filters">
-                  <label className="control-label">{t('dashboard.regiao')}</label>
+                  <span className="control-label">{t('dashboard.regiao')}</span>
                   <div className="control-buttons secondary-btns">
                     {REGIOES.map((reg) => (
                       <button

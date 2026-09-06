@@ -112,6 +112,8 @@ const Terminal = () => {
           <input
             ref={inputRef}
             type="text"
+            id="terminal-input"
+            name="terminal-input"
             className="terminal-input"
             value={input}
             onChange={(e) => setInput(e.target.value)}

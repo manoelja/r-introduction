@@ -47,18 +47,18 @@ interface Pill {
 }
 
 interface Icon {
-  kind: 'heart' | 'skull'; // coração = vacina venceu; caveira = vírus venceu
+  kind: 'dna' | 'skull'; // dna = vacina venceu; caveira = vírus venceu
   x: number;
   y: number;
   size: number;
   life: number; // 1 → 0 (corações do fim não decaem)
-  vy: number; // flutuação (coração sobe, caveira desce devagar)
+  vy: number; // flutuação (dna sobe, caveira desce devagar)
   phase: number;
-  persistent?: boolean; // coração do fim: flutua para sempre
+  persistent?: boolean; // dna do fim: flutua para sempre
 }
 
 // A vacina: entra na fase final (35s), solta ondas de cura em horários fixos e,
-// na última onda (58.5s), mata todos os germes — os corações de vitória ficam na tela
+// na última onda (58.5s), mata todos os germes — os DNAs de vitória ficam na tela
 interface Vaccine {
   x: number;
   y: number;
@@ -91,15 +91,15 @@ interface Shockwave {
 const DARK = {
   virus: '#f87171',
   bacteria: '#2dd4bf',
-  particle: '#86efac',
-  glowRgb: '134,239,172',
+  particle: '#67e8f9',
+  glowRgb: '103,232,249',
 };
 
 const LIGHT = {
   virus: '#dc2626',
   bacteria: '#0d9488',
-  particle: '#16a34a',
-  glowRgb: '22,163,74',
+  particle: '#06b6d4',
+  glowRgb: '6,182,212',
 };
 
 // Paleta dos heróis (cada cápsula tem uma cor própria)
@@ -209,8 +209,8 @@ const hueRotate = (color: string, deg: number): string => {
  *   nele, mas ele os massacra um a um (caveiras 💀)
  * - 35–60s: a vacina entra e enfrenta o chefão — feixe de tensão pulsante entre
  *   os dois; as ondas de cura (43s e 51s) não o derrubam: ele RESISTE
- * - 58.5s: golpe final da vacina mata o chefão → corações de vitória flutuam para
- *   sempre e a vacina fica no centro com um coração pulsando acima dela
+ * - 58.5s: golpe final da vacina mata o chefão → DNAs de vitória flutuam para
+ *   sempre e a vacina fica no centro com um DNA pulsando acima dela
  * - Movimento browniano, morte em 2 fases, respawn com fade-in, profundidade
  * - 30 FPS, pausa com aba invisível, prefers-reduced-motion respeitado
  */
@@ -238,7 +238,7 @@ const CyberBackground = () => {
     let icons: Icon[] = [];
     let vaccine: Vaccine | null = null;
     let bossSpawned = false; // o chefão final já entrou em cena
-    let finale = false; // a última onda já disparou — corações de vitória flutuam para sempre
+    let finale = false; // a última onda já disparou — DNAs de vitória flutuam para sempre
     let maxParticles = 250; // limite de partículas (menor no mobile)
     let sizeScale = 1; // escala de tamanho das entidades conforme a tela
     // Mouse (cursor = remédio curador)
@@ -272,7 +272,7 @@ const CyberBackground = () => {
         x = rand(0, width);
         y = rand(0, height);
       }
-      const speed = rand(0.3, 0.8) * (0.5 + 0.7 * depth);
+      const speed = rand(0.15, 0.4) * (0.5 + 0.7 * depth);
       const angle = rand(0, Math.PI * 2);
       return {
         kind,
@@ -282,7 +282,7 @@ const CyberBackground = () => {
         vy: Math.sin(angle) * speed,
         size: (kind === 'virus' ? rand(12, 19) : rand(14, 21)) * (0.85 + 0.3 * depth) * sizeScale,
         rotation: rand(0, Math.PI * 2),
-        rotSpeed: rand(-0.02, 0.02),
+        rotSpeed: rand(-0.01, 0.01),
         phase: rand(0, Math.PI * 2),
         depth,
         tone: rand(0.85, 1.15),
@@ -315,7 +315,7 @@ const CyberBackground = () => {
       finale = false;
       time = 0;
       // Escala de tamanho conforme a tela: telas pequenas → entidades menores
-      sizeScale = Math.max(0.55, Math.min(1, Math.min(width, height) / 900));
+      sizeScale = Math.max(0.35, Math.min(0.5, Math.min(width, height) / 900));
       // Quantidade adaptada ao tamanho da tela (mobile tem bem menos entidades)
       const small = Math.min(width, height) < 520 || width < 768;
       maxParticles = small ? 100 : 250;
@@ -422,7 +422,7 @@ const CyberBackground = () => {
       for (let i = 0; i < 5; i++) spawnParticle(g.x, g.y, colors.particle, false);
     };
 
-    // Fase 2: dissolve + explosão completa (onda de choque, brilho, pedaços) — e o vírus vira coração
+    // Fase 2: dissolve + explosão completa (onda de choque, brilho, pedaços) — e o vírus vira DNA
     const explode = (g: Germ, colors: typeof DARK, persistent = false) => {
       shockwaves.push({ x: g.x, y: g.y, radius: g.size * 0.5, maxRadius: g.size * 3.4, life: 1 });
       for (let i = 0; i < 14; i++) spawnParticle(g.x, g.y, colors.particle, false);
@@ -431,8 +431,8 @@ const CyberBackground = () => {
         g.hueBase + Math.sin(time * g.hueSpeed + g.phase) * g.hueRange,
       );
       for (let i = 0; i < 3; i++) spawnParticle(g.x, g.y, bodyColor, true);
-      // A vacina ganhou: o vírus derrotado vira coração
-      spawnIcon(g.x, g.y, 'heart', persistent);
+      // A vacina ganhou: o vírus derrotado vira DNA
+      spawnIcon(g.x, g.y, 'dna', persistent);
     };
 
     // Chefão: vírus gigante coroado — só a vacina consegue matá-lo
@@ -457,20 +457,20 @@ const CyberBackground = () => {
         g.hueBase + Math.sin(time * g.hueSpeed + g.phase) * g.hueRange,
       );
       for (let i = 0; i < 6; i++) spawnParticle(g.x, g.y, bodyColor, true);
-      spawnIcon(g.x, g.y, 'heart', persistent);
-      spawnIcon(g.x + rand(-14, 14), g.y + rand(-8, 8), 'heart', persistent);
+      spawnIcon(g.x, g.y, 'dna', persistent);
+      spawnIcon(g.x + rand(-14, 14), g.y + rand(-8, 8), 'dna', persistent);
     };
 
-    // Ícones flutuantes: coração (vacina venceu) ou caveira (vírus venceu)
-    const spawnIcon = (x: number, y: number, kind: 'heart' | 'skull', persistent = false) => {
+    // Ícones flutuantes: dna (vacina venceu) ou caveira (vírus venceu)
+    const spawnIcon = (x: number, y: number, kind: 'dna' | 'skull', persistent = false) => {
       let vy: number;
       if (persistent) vy = rand(-0.8, -0.35); // corações do fim: flutuam para sempre
-      else vy = kind === 'heart' ? -0.12 : 0.07;
+      else vy = kind === 'dna' ? -0.12 : 0.07;
       icons.push({
         kind,
         x,
         y,
-        size: kind === 'heart' ? 16 : 13,
+        size: kind === 'dna' ? 16 : 13,
         life: 1,
         vy,
         phase: rand(0, Math.PI * 2),
@@ -545,16 +545,16 @@ const CyberBackground = () => {
       return best;
     };
 
-    // Onda de cura da vacina: mata os germes vivos (cada um vira coração ❤️).
-    // Na última onda, nenhum germe escapa — todos viram corações de vitória
+    // Onda de cura da vacina: mata os germes vivos (cada um vira DNA).
+    // Na última onda, nenhum germe escapa — todos viram DNAs de vitória
     const fireVaccineWave = (colors: typeof DARK, final = false) => {
       const v = vaccine;
       if (!v) return;
       v.waveT = VACCINE_WAVE_DUR;
       for (const g of germs) {
         if (final && g.state === 'dead') {
-          // Já estava morto: ganha um coração extra e não renasce antes do fim
-          spawnIcon(g.x, g.y, 'heart', true);
+          // Já estava morto: ganha um DNA extra e não renasce antes do fim
+          spawnIcon(g.x, g.y, 'dna', true);
           g.respawnTimer = TOTAL_DURATION;
           continue;
         }
@@ -576,11 +576,11 @@ const CyberBackground = () => {
       const diag = Math.hypot(width, height);
       shockwaves.push({ x: v.x, y: v.y, radius: 12, maxRadius: diag * 0.55, life: 1.2 });
       shockwaves.push({ x: v.x, y: v.y, radius: 6, maxRadius: diag, life: 1.5 });
-      spawnIcon(v.x, v.y, 'heart', final);
-      spawnIcon(v.x + rand(-16, 16), v.y + rand(-8, 8), 'heart', final);
+      spawnIcon(v.x, v.y, 'dna', final);
+      spawnIcon(v.x + rand(-16, 16), v.y + rand(-8, 8), 'dna', final);
       if (final) {
         // Chuva de corações: mais alguns espalhados para a comemoração final
-        for (let i = 0; i < 6; i++) spawnIcon(rand(0, width), rand(0, height), 'heart', true);
+        for (let i = 0; i < 6; i++) spawnIcon(rand(0, width), rand(0, height), 'dna', true);
       }
     };
 
@@ -1074,8 +1074,8 @@ const CyberBackground = () => {
 
       // Halo de envelope (membrana translúcida)
       ctx.strokeStyle = shade(color, 1.1 * g.tone);
-      ctx.globalAlpha = alpha * 0.35;
-      ctx.lineWidth = 1.5;
+      ctx.globalAlpha = alpha * 0.2;
+      ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.arc(0, 0, s * 0.72, 0, Math.PI * 2);
       ctx.stroke();
@@ -1092,8 +1092,8 @@ const CyberBackground = () => {
       ctx.fill();
 
       // Sombra interna na base
-      ctx.strokeStyle = 'rgba(0,0,0,0.28)';
-      ctx.lineWidth = s * 0.12;
+      ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+      ctx.lineWidth = s * 0.08;
       ctx.beginPath();
       ctx.arc(0, 0, s * 0.5, 0.9, 2.4);
       ctx.stroke();
@@ -1367,16 +1367,16 @@ const CyberBackground = () => {
       const hop = celebrate ? 1 + 0.1 * Math.abs(Math.sin(p.celebrateTimer * 16)) : 1;
 
       // Aura de herói (brilho suave na cor da cápsula)
-      const aura = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 2.4);
-      aura.addColorStop(0, `rgba(${p.palette.trailRgb},${0.16 * alpha})`);
+      const aura = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 1.8);
+      aura.addColorStop(0, `rgba(${p.palette.trailRgb},${0.08 * alpha})`);
       aura.addColorStop(1, `rgba(${p.palette.trailRgb},0)`);
       ctx.fillStyle = aura;
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size * 2.4, 0, Math.PI * 2);
+      ctx.arc(p.x, p.y, p.size * 1.8, 0, Math.PI * 2);
       ctx.fill();
 
       // Sombra projetada (descola do fundo)
-      ctx.globalAlpha = alpha * 0.22;
+      ctx.globalAlpha = alpha * 0.12;
       ctx.fillStyle = '#000';
       ctx.beginPath();
       ctx.ellipse(p.x + 2, p.y + 3, w * 0.5, h * 0.5, p.rotation, 0, Math.PI * 2);
@@ -1420,19 +1420,19 @@ const CyberBackground = () => {
       ctx.stroke();
 
       // Gloss especular (faixa curva de gel)
-      ctx.fillStyle = 'rgba(255,255,255,0.35)';
+      ctx.fillStyle = 'rgba(255,255,255,0.18)';
       ctx.beginPath();
       ctx.ellipse(0, -h * 0.2, w * 0.38, h * 0.2, 0, 0, Math.PI);
       ctx.fill();
 
       // Halo dourado (curador)
-      ctx.strokeStyle = 'rgba(251,191,36,0.9)';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = 'rgba(251,191,36,0.5)';
+      ctx.lineWidth = 1.2;
       ctx.beginPath();
       ctx.ellipse(0, -h * 1.0, h * 0.42, h * 0.15, 0, 0, Math.PI * 2);
       ctx.stroke();
-      const haloGlow = ctx.createRadialGradient(0, -h * 1.0, 0, 0, -h * 1.0, h * 0.55);
-      haloGlow.addColorStop(0, 'rgba(251,191,36,0.35)');
+      const haloGlow = ctx.createRadialGradient(0, -h * 1.0, 0, 0, -h * 1.0, h * 0.45);
+      haloGlow.addColorStop(0, 'rgba(251,191,36,0.18)');
       haloGlow.addColorStop(1, 'rgba(251,191,36,0)');
       ctx.fillStyle = haloGlow;
       ctx.beginPath();
@@ -1452,16 +1452,16 @@ const CyberBackground = () => {
 
       if (waveProg > 0) {
         // Onda de cura expansiva (acabou de disparar)
-        const glowR = (24 + waveProg * 300) * sizeScale;
+        const glowR = (24 + waveProg * 200) * sizeScale;
         const glow = ctx.createRadialGradient(v.x, v.y, 0, v.x, v.y, glowR);
-        glow.addColorStop(0, `rgba(191,219,254,${0.55 * alpha})`);
+        glow.addColorStop(0, `rgba(191,219,254,${0.25 * alpha})`);
         glow.addColorStop(1, 'rgba(191,219,254,0)');
         ctx.fillStyle = glow;
         ctx.beginPath();
         ctx.arc(v.x, v.y, glowR, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = `rgba(147,197,253,${0.6 * alpha})`;
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = `rgba(147,197,253,${0.3 * alpha})`;
+        ctx.lineWidth = 1.2;
         ctx.beginPath();
         ctx.arc(v.x, v.y, glowR, 0, Math.PI * 2);
         ctx.stroke();
@@ -1537,7 +1537,7 @@ const CyberBackground = () => {
       ctx.stroke();
       ctx.restore();
 
-      // Vitória: um coração pulsa flutuando acima da vacina (fica no meio da tela)
+      // Vitória: um DNA pulsa flutuando acima da vacina (fica no meio da tela)
       if (finale) {
         const bob = Math.sin(time * 2.5 + v.phase) * 6;
         const hs = (13 + 2 * Math.sin(time * 5 + v.phase)) * sizeScale;
@@ -1577,17 +1577,17 @@ const CyberBackground = () => {
           const b = germs[j];
           if (b.state !== 'alive') continue;
           const d = Math.hypot(a.x - b.x, a.y - b.y);
-          const alpha = Math.max(0.08, (1 - d / 600) * 0.3);
+          const alpha = Math.max(0.04, (1 - d / 600) * 0.15);
           // brilho por baixo (camada larga e fraca)
           ctx.strokeStyle = `rgba(${virusRgb},${alpha * 0.35})`;
-          ctx.lineWidth = 3;
+          ctx.lineWidth = 2;
           ctx.beginPath();
           ctx.moveTo(a.x, a.y);
           ctx.lineTo(b.x, b.y);
           ctx.stroke();
           // traço orgânico: tracejado com deslocamento animado (infecção rastejando)
           ctx.strokeStyle = `rgba(${virusRgb},${alpha})`;
-          ctx.lineWidth = 1.1;
+          ctx.lineWidth = 0.8;
           ctx.setLineDash([3, 6]);
           ctx.lineDashOffset = -time * 12 + i * 13 + j * 7;
           ctx.beginPath();
@@ -1601,8 +1601,8 @@ const CyberBackground = () => {
 
       for (const g of germs) {
         if (g.deathScale <= 0) continue;
-        const baseAlpha = colors === LIGHT ? 0.55 : 0.5;
-        const alpha = (g.state === 'alive' ? baseAlpha : 0.65) * (0.45 + 0.65 * g.depth);
+        const baseAlpha = colors === LIGHT ? 0.3 : 0.25;
+        const alpha = (g.state === 'alive' ? baseAlpha : 0.4) * (0.45 + 0.65 * g.depth);
         if (g.kind === 'virus') drawVirus(g, colors.virus, alpha);
         else drawBacteria(g, colors.bacteria, alpha);
       }
@@ -1615,17 +1615,17 @@ const CyberBackground = () => {
           const b = pills[j];
           if (a.state === 'dead' || b.state === 'dead') continue;
           const d = Math.hypot(a.x - b.x, a.y - b.y);
-          const alpha = Math.max(0.15, (1 - d / 500) * 0.4);
+          const alpha = Math.max(0.08, (1 - d / 500) * 0.2);
           // brilho por baixo (camada larga e fraca)
           ctx.strokeStyle = `rgba(${particleRgb},${alpha * 0.3})`;
-          ctx.lineWidth = 3.5;
+          ctx.lineWidth = 2;
           ctx.beginPath();
           ctx.moveTo(a.x, a.y);
           ctx.lineTo(b.x, b.y);
           ctx.stroke();
           // linha sólida
           ctx.strokeStyle = `rgba(${particleRgb},${alpha})`;
-          ctx.lineWidth = 1.2;
+          ctx.lineWidth = 0.8;
           ctx.beginPath();
           ctx.moveTo(a.x, a.y);
           ctx.lineTo(b.x, b.y);
@@ -1634,9 +1634,9 @@ const CyberBackground = () => {
           const t = (((time * 0.5 + i * 0.17 + j * 0.29) % 1) + 1) % 1;
           const px = a.x + (b.x - a.x) * t;
           const py = a.y + (b.y - a.y) * t;
-          ctx.fillStyle = `rgba(${particleRgb},${0.5 * alpha})`;
+          ctx.fillStyle = `rgba(${particleRgb},${0.3 * alpha})`;
           ctx.beginPath();
-          ctx.arc(px, py, 4, 0, Math.PI * 2);
+          ctx.arc(px, py, 2.5, 0, Math.PI * 2);
           ctx.fill();
           ctx.fillStyle = `rgba(255,255,255,${0.85 * alpha})`;
           ctx.beginPath();
@@ -1647,10 +1647,10 @@ const CyberBackground = () => {
 
       for (const p of pills) {
         if (p.state === 'dead') continue;
-        drawPill(p, colors === LIGHT ? 0.85 : 0.8);
+        drawPill(p, colors === LIGHT ? 0.5 : 0.45);
       }
 
-      if (vaccine) drawVaccine(vaccine, colors === LIGHT ? 0.95 : 0.9);
+      if (vaccine) drawVaccine(vaccine, colors === LIGHT ? 0.6 : 0.55);
 
       // ---- Tensão vacina × chefão: feixe de energia pulsante entre os dois ----
       // Enquanto a vacina e o chefão estão em cena (antes do golpe final), um
@@ -1668,8 +1668,8 @@ const CyberBackground = () => {
         const tension = 0.45 + 0.55 * Math.min((time - VACCINE_ARRIVE) / (FINALE_TIME - VACCINE_ARRIVE), 1);
         const flicker = 0.7 + 0.3 * Math.sin(time * 18);
         // Raio principal (vermelho, o chefão)
-        ctx.strokeStyle = `rgba(239,68,68,${(0.35 + 0.45 * tension) * flicker})`;
-        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = `rgba(239,68,68,${(0.15 + 0.2 * tension) * flicker})`;
+        ctx.lineWidth = 1.5;
         ctx.beginPath();
         ctx.moveTo(vaccine.x, vaccine.y);
         ctx.quadraticCurveTo(
@@ -1680,8 +1680,8 @@ const CyberBackground = () => {
         );
         ctx.stroke();
         // Raio secundário (azul, a vacina) — deslocado, cria o efeito de duelo
-        ctx.strokeStyle = `rgba(96,165,250,${(0.3 + 0.4 * tension) * flicker})`;
-        ctx.lineWidth = 1.4;
+        ctx.strokeStyle = `rgba(96,165,250,${(0.12 + 0.18 * tension) * flicker})`;
+        ctx.lineWidth = 0.8;
         ctx.beginPath();
         ctx.moveTo(vaccine.x, vaccine.y);
         ctx.quadraticCurveTo(
@@ -1692,35 +1692,35 @@ const CyberBackground = () => {
         );
         ctx.stroke();
         // Faíscas de energia percorrendo o feixe
-        for (let i = 0; i < 4; i++) {
-          const t = (((time * 0.6 + i * 0.25) % 1) + 1) % 1;
+        for (let i = 0; i < 3; i++) {
+          const t = (((time * 0.6 + i * 0.33) % 1) + 1) % 1;
           const ex = vaccine.x + dx * t + nx * Math.sin(time * 20 + i * 3) * 10;
           const ey = vaccine.y + dy * t + ny * Math.sin(time * 20 + i * 3) * 10;
-          ctx.fillStyle = `rgba(255,255,255,${0.5 + 0.5 * tension})`;
+          ctx.fillStyle = `rgba(255,255,255,${0.2 + 0.2 * tension})`;
           ctx.beginPath();
           ctx.arc(ex, ey, 2.2, 0, Math.PI * 2);
           ctx.fill();
         }
         // Aura de tensão ao redor do chefão
-        const bossGlow = ctx.createRadialGradient(bx, by, 0, bx, by, bossAlive.size * 2.6);
-        bossGlow.addColorStop(0, `rgba(239,68,68,${0.25 * tension})`);
+        const bossGlow = ctx.createRadialGradient(bx, by, 0, bx, by, bossAlive.size * 2.0);
+        bossGlow.addColorStop(0, `rgba(239,68,68,${0.12 * tension})`);
         bossGlow.addColorStop(1, 'rgba(239,68,68,0)');
         ctx.fillStyle = bossGlow;
         ctx.beginPath();
-        ctx.arc(bx, by, bossAlive.size * 2.6, 0, Math.PI * 2);
+        ctx.arc(bx, by, bossAlive.size * 2.0, 0, Math.PI * 2);
         ctx.fill();
       }
 
       for (const sw of shockwaves) {
         const grad = ctx.createRadialGradient(sw.x, sw.y, 0, sw.x, sw.y, sw.radius);
-        grad.addColorStop(0, `rgba(${colors.glowRgb},${0.35 * sw.life})`);
+        grad.addColorStop(0, `rgba(${colors.glowRgb},${0.15 * sw.life})`);
         grad.addColorStop(1, `rgba(${colors.glowRgb},0)`);
         ctx.fillStyle = grad;
         ctx.beginPath();
         ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = `rgba(255,255,255,${0.5 * sw.life})`;
-        ctx.lineWidth = 1.5 + 2 * sw.life;
+        ctx.strokeStyle = `rgba(255,255,255,${0.25 * sw.life})`;
+        ctx.lineWidth = 0.8 + 1.5 * sw.life;
         ctx.beginPath();
         ctx.arc(sw.x, sw.y, sw.radius * 0.8, 0, Math.PI * 2);
         ctx.stroke();
@@ -1728,29 +1728,29 @@ const CyberBackground = () => {
 
       // Ícones: corações (vacina venceu) e caveiras (vírus venceu)
       for (const ic of icons) {
-        const pulse = 1 + 0.12 * Math.sin(time * 5 + ic.phase);
-        const glowColor = ic.kind === 'heart' ? '244,63,94' : '148,163,184';
-        const glow = ctx.createRadialGradient(ic.x, ic.y, 0, ic.x, ic.y, ic.size * 1.8);
-        glow.addColorStop(0, `rgba(${glowColor},${0.45 * ic.life})`);
+        const pulse = 1 + 0.06 * Math.sin(time * 5 + ic.phase);
+        const glowColor = ic.kind === 'dna' ? '6,182,212' : '148,163,184';
+        const glow = ctx.createRadialGradient(ic.x, ic.y, 0, ic.x, ic.y, ic.size * 1.4);
+        glow.addColorStop(0, `rgba(${glowColor},${0.2 * ic.life})`);
         glow.addColorStop(1, `rgba(${glowColor},0)`);
         ctx.fillStyle = glow;
         ctx.beginPath();
-        ctx.arc(ic.x, ic.y, ic.size * 1.8, 0, Math.PI * 2);
+        ctx.arc(ic.x, ic.y, ic.size * 1.4, 0, Math.PI * 2);
         ctx.fill();
         ctx.save();
         ctx.translate(ic.x, ic.y);
         ctx.scale(pulse, pulse);
         ctx.globalAlpha = ic.life;
-        if (ic.kind === 'heart') {
-          ctx.fillStyle = '#f43f5e';
+        if (ic.kind === 'dna') {
+          // Cruz médica (+) — símbolo profissional de saúde
+          const s = ic.size;
+          const thickness = s * 0.28;
+          ctx.fillStyle = '#06b6d4';
           ctx.beginPath();
-          ctx.moveTo(0, ic.size * 0.35);
-          ctx.bezierCurveTo(-ic.size, -ic.size * 0.5, -ic.size * 0.45, -ic.size * 0.95, 0, -ic.size * 0.28);
-          ctx.bezierCurveTo(ic.size * 0.45, -ic.size * 0.95, ic.size, -ic.size * 0.5, 0, ic.size * 0.35);
+          ctx.roundRect(-thickness / 2, -s * 0.5, thickness, s, thickness / 2);
           ctx.fill();
-          ctx.fillStyle = 'rgba(255,255,255,0.5)';
           ctx.beginPath();
-          ctx.ellipse(-ic.size * 0.3, -ic.size * 0.45, ic.size * 0.18, ic.size * 0.1, -0.6, 0, Math.PI * 2);
+          ctx.roundRect(-s * 0.5, -thickness / 2, s, thickness, thickness / 2);
           ctx.fill();
         } else {
           // Caveira: crânio + mandíbula, órbitas, nariz e dentes

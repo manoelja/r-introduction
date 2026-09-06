@@ -126,12 +126,12 @@
 
 .footer-copyright-text {
   font-size: 0.75rem;
-  color: #86efac; /* verde claro no modo escuro */
+  color: #67e8f9; /* ciano claro no modo escuro */
   text-align: center;
 }
 
 html.light-theme .footer-copyright-text {
-  color: #15803d; /* verde no modo claro */
+  color: #0891b2; /* ciano no modo claro */
 }
 
 @media (max-width: 768px) {

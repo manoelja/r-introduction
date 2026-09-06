@@ -1,5 +1,5 @@
 .covid-terminal {
-  background: rgba(4, 8, 6, 0.9);
+  background: rgba(4, 8, 12, 0.9);
   border: 1px solid var(--card-border);
   border-radius: var(--cyber-radius);
   overflow: hidden;
@@ -9,8 +9,8 @@
 }
 
 html.light-theme .covid-terminal {
-  background: rgba(250, 255, 251, 0.95);
-  border-color: rgba(21, 128, 61, 0.15);
+  background: rgba(250, 255, 255, 0.95);
+  border-color: rgba(8, 145, 178, 0.15);
 }
 
 .covid-terminal:hover,
@@ -32,7 +32,7 @@ html.light-theme .covid-terminal {
 }
 
 html.light-theme .terminal-header {
-  background: rgba(240, 253, 244, 0.7);
+  background: rgba(236, 254, 255, 0.7);
 }
 
 .dot {
@@ -43,7 +43,7 @@ html.light-theme .terminal-header {
 
 .dot.red { background: #ff5f56; }
 .dot.yellow { background: #ffbd2e; }
-.dot.green { background: #27c93f; }
+.dot.green { background: #22d3ee; }
 
 .terminal-label {
   margin-left: 0.5rem;
@@ -63,7 +63,7 @@ html.light-theme .terminal-header {
 }
 
 html.light-theme .shell-selector {
-  background: rgba(240, 253, 244, 0.6);
+  background: rgba(236, 254, 255, 0.6);
 }
 
 .shell-btn {
@@ -115,11 +115,11 @@ html.light-theme .shell-selector {
 }
 
 .terminal-success {
-  color: #86efac;
+  color: #67e8f9;
 }
 
 html.light-theme .terminal-success {
-  color: #15803d;
+  color: #0891b2;
 }
 
 .terminal-error {
@@ -143,7 +143,7 @@ html.light-theme .terminal-info {
 }
 
 html.light-theme .terminal-output {
-  color: #3f5c4c;
+  color: #155e75;
 }
 
 .terminal-input-line {

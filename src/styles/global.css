@@ -2,13 +2,13 @@
   /* Core Colors */
   --bg-color: #0a0a12;
   --bg-secondary: rgba(12, 10, 20, 0.8);
-  --accent-color: #16a34a;
-  --accent-soft: rgba(22, 163, 74, 0.12);
-  --accent-hover: #15803d;
+  --accent-color: #06b6d4;
+  --accent-soft: rgba(6, 182, 212, 0.12);
+  --accent-hover: #0891b2;
   --text-primary: #ffffff;
   --text-secondary: #a1a1aa;
   --card-bg: transparent;
-  --card-border: rgba(22, 163, 74, 0.18);
+  --card-border: rgba(6, 182, 212, 0.18);
   --glass-bg: rgba(8, 6, 16, 0.9);
 
   /* Teal accent (complemento) */
@@ -16,7 +16,7 @@
   --lavender-soft: rgba(45, 212, 191, 0.1);
 
   /* Status colors */
-  --success: #86efac;
+  --success: #67e8f9;
   --warning: #fbbf24;
   --error: #f87171;
   --info: #7dd3fc;
@@ -26,7 +26,7 @@
   --transition-fast: all 0.15s ease;
 
   /* Gradients */
-  --title-gradient: linear-gradient(180deg, #fff 0%, #16a34a 100%);
+  --title-gradient: linear-gradient(180deg, #fff 0%, #06b6d4 100%);
 
   /* Border radius */
   --cyber-radius: 6px;
@@ -52,26 +52,26 @@
   /* Shadows */
   --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.2);
-  --shadow-lg: 0 8px 40px rgba(22, 163, 74, 0.14);
+  --shadow-lg: 0 8px 40px rgba(6, 182, 212, 0.14);
 }
 
 html.light-theme {
-  --bg-color: #f0fdf4;
-  --bg-secondary: rgba(240, 253, 244, 0.8);
-  --accent-color: #15803d;
-  --accent-soft: rgba(21, 128, 61, 0.1);
-  --accent-hover: #166534;
-  --text-primary: #052e16;
-  --text-secondary: #3f5c4c;
+  --bg-color: #ecfeff;
+  --bg-secondary: rgba(236, 254, 255, 0.8);
+  --accent-color: #0891b2;
+  --accent-soft: rgba(8, 145, 178, 0.1);
+  --accent-hover: #0e7490;
+  --text-primary: #164e63;
+  --text-secondary: #155e75;
   --card-bg: transparent;
-  --card-border: rgba(21, 128, 61, 0.18);
-  --glass-bg: rgba(240, 253, 244, 0.95);
+  --card-border: rgba(8, 145, 178, 0.18);
+  --glass-bg: rgba(236, 254, 255, 0.95);
   --lavender: #0d9488;
   --lavender-soft: rgba(13, 148, 136, 0.1);
-  --title-gradient: linear-gradient(180deg, #052e16 0%, #15803d 100%);
+  --title-gradient: linear-gradient(180deg, #164e63 0%, #0891b2 100%);
   --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 8px 40px rgba(21, 128, 61, 0.12);
+  --shadow-lg: 0 8px 40px rgba(8, 145, 178, 0.12);
 }
 
 * {
@@ -114,14 +114,14 @@ html.light-theme {
 }
 
 .cyber-card:hover {
-  border-color: rgba(22, 163, 74, 0.35);
-  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(22, 163, 74, 0.1);
+  border-color: rgba(6, 182, 212, 0.35);
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(6, 182, 212, 0.1);
   transform: translateY(-3px);
 }
 
 html.light-theme .cyber-card:hover {
-  border-color: rgba(21, 128, 61, 0.35);
-  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(21, 128, 61, 0.1);
+  border-color: rgba(8, 145, 178, 0.35);
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(8, 145, 178, 0.1);
 }
 
 /* Corner accents */
@@ -158,34 +158,34 @@ button:hover svg,
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: rgba(22, 163, 74, 0.35);
+  background: rgba(6, 182, 212, 0.35);
   border-radius: var(--radius-full);
   border: 2px solid transparent;
   background-clip: content-box;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(22, 163, 74, 0.55);
+  background: rgba(6, 182, 212, 0.55);
   background-clip: content-box;
 }
 
 html.light-theme ::-webkit-scrollbar-thumb {
-  background: rgba(21, 128, 61, 0.35);
+  background: rgba(8, 145, 178, 0.35);
   background-clip: content-box;
 }
 
 html.light-theme ::-webkit-scrollbar-thumb:hover {
-  background: rgba(21, 128, 61, 0.55);
+  background: rgba(8, 145, 178, 0.55);
   background-clip: content-box;
 }
 
 /* Firefox scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(22, 163, 74, 0.35) transparent;
+  scrollbar-color: rgba(6, 182, 212, 0.35) transparent;
 }
 
 html.light-theme * {
-  scrollbar-color: rgba(21, 128, 61, 0.35) transparent;
+  scrollbar-color: rgba(8, 145, 178, 0.35) transparent;
 }
 
 @media (max-width: 768px) {

@@ -38,7 +38,7 @@ const escapeHtml = (s: string): string =>
 
 /** Cor de destaque de acordo com o tema. */
 const getAccentColor = (): string =>
-  document.documentElement.classList.contains('light-theme') ? '#15803d' : '#16a34a';
+  document.documentElement.classList.contains('light-theme') ? '#0891b2' : '#06b6d4';
 
 /** Estilos aplicados APENAS à cópia off-screen usada para gerar o PDF/PNG. */
 const getDocPrintStyles = (accentColor: string): string => `
