@@ -6,12 +6,16 @@ import { cleaningStats, summaryStats } from '../../data/covid';
 import DocumentPreviewModal, { type DocInfo } from './DocumentPreviewModal';
 import './About.css';
 
-const About = () => {
+interface AboutProps {
+  previewDoc: DocInfo | null;
+  setPreviewDoc: (doc: DocInfo | null) => void;
+}
+
+const About = ({ previewDoc, setPreviewDoc }: AboutProps) => {
   const { t, i18n } = useTranslation();
   const lang = i18n.language.split('-')[0];
   const [expandedEdu, setExpandedEdu] = useState<string | null>(null);
   const [isMainExpanded, setIsMainExpanded] = useState(false);
-  const [previewDoc, setPreviewDoc] = useState<DocInfo | null>(null);
 
   const docs = useMemo<DocInfo[]>(() => {
     const L = (pt: string, en: string, es: string) => (lang === 'en' ? en : lang === 'es' ? es : pt);
@@ -20,8 +24,8 @@ const About = () => {
 
     return [
       {
-        name: L('Resumo Técnico', 'Technical Summary', 'Resumen Técnico'),
-        slug: 'Resumo_Tecnico',
+        name: t('about.docs_ref_name'),
+        slug: 'Referencia_Tecnica',
         summary: [
           {
             heading: L('O que é', 'What it is', 'Qué es'),
@@ -126,75 +130,91 @@ const About = () => {
         ],
       },
       {
-        name: L('Resultados da Análise', 'Analysis Results', 'Resultados del Análisis'),
-        slug: 'Resultados_Analise',
+        name: t('about.docs_ml_name'),
+        slug: 'Plano_ML',
         summary: [
           {
-            heading: L('Goiânia em números (Item 6)', 'Goiânia in numbers (Item 6)', 'Goiânia en números (Ítem 6)'),
-            items: [
-              `${br(summaryStats.goiania.casosAcumulados)} ${L('casos acumulados ao final de 2021', 'cumulative cases by the end of 2021', 'casos acumulados al final de 2021')}`,
-              `${br(summaryStats.goiania.obitosAcumulados)} ${L('óbitos acumulados ao final de 2021', 'cumulative deaths by the end of 2021', 'muertes acumuladas al final de 2021')}`,
-              `${br(summaryStats.goiania.casosNovos)} ${L('casos novos notificados em 2021', 'new cases reported in 2021', 'casos nuevos notificados en 2021')}`,
-              `${br(summaryStats.goiania.obitosNovos)} ${L('óbitos novos notificados em 2021', 'new deaths reported in 2021', 'muertes nuevas notificadas en 2021')}`,
-            ],
-          },
-          {
-            heading: L('Semana a semana (Itens 7 e 8)', 'Week by week (Items 7 and 8)', 'Semana a semana (Ítems 7 y 8)'),
+            heading: L('Objetivo', 'Objective', 'Objetivo'),
             items: [
               L(
-                'Os gráficos de linha mostram a evolução de casos e óbitos acumulados nas 52 semanas, incluindo o pico da segunda onda em meados do ano.',
-                'Line charts show the evolution of cumulative cases and deaths across the 52 weeks, including the second-wave peak in mid-year.',
-                'Los gráficos de línea muestran la evolución de casos y muertes acumulados en las 52 semanas, incluido el pico de la segunda ola a mediados de año.',
-              ),
-              L(
-                'A curva de óbitos é mais suave e vem depois da de casos — o que é esperado numa pandemia.',
-                'The death curve is smoother and lags the case curve — which is expected in a pandemic.',
-                'La curva de muertes es más suave y llega después de la de casos — lo esperado en una pandemia.',
+                'Aplicar modelos de Machine Learning sobre a série temporal de COVID-19 para prever surtos, classificar municípios por risco e identificar padrões regionais de contágio.',
+                'Apply Machine Learning models on the COVID-19 time series to predict outbreaks, classify municipalities by risk, and identify regional contagion patterns.',
+                'Aplicar modelos de Machine Learning sobre la serie temporal de COVID-19 para prever brotes, clasificar municipios por riesgo e identificar patrones regionales de contagio.',
               ),
             ],
           },
           {
-            heading: L('O Brasil por regiões (Item 10)', 'Brazil by region (Item 10)', 'Brasil por regiones (Ítem 10)'),
+            heading: L('Previsão de séries temporais', 'Time series forecasting', 'Pronóstico de series temporales'),
             items: [
               L(
-                'As barras empilhadas mostram os óbitos acumulados por semana, divididos pelas 5 regiões.',
-                'Stacked bars show cumulative deaths per week, split by the 5 regions.',
-                'Las barras apiladas muestran las muertes acumuladas por semana, divididas por las 5 regiones.',
+                `Modelo ARIMA/SARIMA para prever casos novos nas próximas 4 semanas usando as ${br(cleaningStats.finalRecords)} séries semanais já limpas.`,
+                `ARIMA/SARIMA model to forecast new cases for the next 4 weeks using the ${br(cleaningStats.finalRecords)} cleaned weekly series.`,
+                `Modelo ARIMA/SARIMA para pronosticar casos nuevos en las próximas 4 semanas usando las ${br(cleaningStats.finalRecords)} series semanales ya limpias.`,
               ),
               L(
-                'Dá para ver que as regiões tiveram ondas em momentos diferentes — o Sudeste antes, o Norte e o Nordeste depois.',
-                'You can see regions had waves at different times — the Southeast earlier, the North and Northeast later.',
-                'Se puede ver que las regiones tuvieron olas en momentos distintos — el Sudeste antes, el Norte y el Nordeste después.',
+                'Comparar com Prophet (Meta) para avaliar qual modelo captura melhor a sazonalidade semanal e tendências de longo prazo.',
+                'Compare with Prophet (Meta) to evaluate which model better captures weekly seasonality and long-term trends.',
+                'Comparar con Prophet (Meta) para evaluar qué modelo captura mejor la estacionalidad semanal y las tendencias a largo plazo.',
               ),
             ],
           },
           {
-            heading: L('Metropolitana vs Interior', 'Metropolitan vs Interior', 'Metropolitana vs Interior'),
+            heading: L('Classificação de risco', 'Risk classification', 'Clasificación de riesgo'),
             items: [
               L(
-                'O dashboard compara Região Metropolitana e Interior, mostrando como a doença se concentrou na capital e arredores.',
-                'The dashboard compares the Metropolitan Region and the Interior, showing how the disease concentrated in the capital and surroundings.',
-                'El panel compara la Región Metropolitana y el Interior, mostrando cómo la enfermedad se concentró en la capital y alrededores.',
+                'Classificar municípios em faixas de risco (baixo, médio, alto) com base na taxa de crescimento semanal de casos e óbitos.',
+                'Classify municipalities into risk levels (low, medium, high) based on the weekly growth rate of cases and deaths.',
+                'Clasificar municipios en niveles de riesgo (bajo, medio, alto) basándose en la tasa de crecimiento semanal de casos y muertes.',
+              ),
+              L(
+                'Algoritmos candidatos: Random Forest, Gradient Boosting (XGBoost) e Redes Neurais (MLP) — validados com validação cruzada k-fold.',
+                'Candidate algorithms: Random Forest, Gradient Boosting (XGBoost), and Neural Networks (MLP) — validated with k-fold cross-validation.',
+                'Algoritmos candidatos: Random Forest, Gradient Boosting (XGBoost) y Redes Neuronales (MLP) — validados con validación cruzada k-fold.',
               ),
             ],
           },
           {
-            heading: L('Cobertura', 'Coverage', 'Cobertura'),
+            heading: L('Clustering de municípios', 'Municipality clustering', 'Clustering de municipios'),
             items: [
               L(
-                `${br(summaryStats.totalMunicipios)} municípios · ${summaryStats.totalUFs} UFs · 5 regiões.`,
-                `${br(summaryStats.totalMunicipios)} municipalities · ${summaryStats.totalUFs} states · 5 regions.`,
-                `${br(summaryStats.totalMunicipios)} municipios · ${summaryStats.totalUFs} UFs · 5 regiones.`,
+                'Agrupar municípios com perfis epidemiológicos semelhantes usando K-Means e DBSCAN, sem rótulos prévios.',
+                'Group municipalities with similar epidemiological profiles using K-Means and DBSCAN, without prior labels.',
+                'Agrupar municipios con perfiles epidemiológicos similares usando K-Means y DBSCAN, sin etiquetas previas.',
               ),
               L(
-                `${summaryStats.goiania.semanas} semanas epidemiológicas completas de 2021.`,
-                `${summaryStats.goiania.semanas} complete epidemiological weeks of 2021.`,
-                `${summaryStats.goiania.semanas} semanas epidemiológicas completas de 2021.`,
+                'Identificar clusters de municípios que seguem padrões parecidos de contágio — útil para direcionar políticas públicas regionalizadas.',
+                'Identify clusters of municipalities that follow similar contagion patterns — useful for directing regionalized public policies.',
+                'Identificar clusters de municipios que siguen patrones similares de contagio — útil para dirigir políticas públicas regionalizadas.',
+              ),
+            ],
+          },
+          {
+            heading: L('Detecção de anomalias', 'Anomaly detection', 'Detección de anomalías'),
+            items: [
+              L(
+                'Detectar semanas com registros atípicos que podem indicar falhas na notificação ou surtos inesperados.',
+                'Detect weeks with atypical records that may indicate notification failures or unexpected outbreaks.',
+                'Detectar semanas con registros atípicos que pueden indicar fallos en la notificación o brotes inesperados.',
               ),
               L(
-                '7 tipos de gráfico, filtros combináveis e drill-down Nacional → Região → UF → Município.',
-                '7 chart types, combinable filters and drill-down National → Region → State → Municipality.',
-                '7 tipos de gráfico, filtros combinables y drill-down Nacional → Región → UF → Municipio.',
+                'Técnicas: Z-Score, Isolation Forest e detecção baseada em janelas deslizantes para séries temporais.',
+                'Techniques: Z-Score, Isolation Forest and sliding-window detection for time series.',
+                'Técnicas: Z-Score, Isolation Forest y detección basada en ventanas deslizantes para series temporales.',
+              ),
+            ],
+          },
+          {
+            heading: L('Dados disponíveis para modelagem', 'Data available for modeling', 'Datos disponibles para modelagem'),
+            items: [
+              L(
+                `${summaryStats.totalMunicipios} municípios · ${summaryStats.totalUFs} UFs · 5 regiões — dados semanais de casos e óbitos acumulados e novos.`,
+                `${summaryStats.totalMunicipios} municipalities · ${summaryStats.totalUFs} states · 5 regions — weekly data on cumulative and new cases and deaths.`,
+                `${summaryStats.totalMunicipios} municipios · ${summaryStats.totalUFs} UFs · 5 regiones — datos semanales de casos y muertes acumulados y nuevos.`,
+              ),
+              L(
+                `Série temporal: ${summaryStats.goiania.semanas} semanas de 2021 (semana 1 à 52) — window size ideal para modelos autoregressivos.`,
+                `Time series: ${summaryStats.goiania.semanas} weeks of 2021 (week 1 to 52) — ideal window size for autoregressive models.`,
+                `Serie temporal: ${summaryStats.goiania.semanas} semanas de 2021 (semana 1 a 52) — tamaño de ventana ideal para modelos autoregresivos.`,
               ),
             ],
           },

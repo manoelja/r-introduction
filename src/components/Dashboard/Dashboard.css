@@ -115,15 +115,15 @@
   margin-left: auto;
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  padding: 0.35rem 0.8rem;
+  gap: 0.4rem;
+  padding: 0.4rem 0.8rem;
   background: var(--accent-soft);
   border: 1px solid var(--card-border);
   border-radius: var(--cyber-radius);
   color: var(--accent-color);
   cursor: pointer;
   font-size: 0.7rem;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
   transition: var(--transition);
@@ -147,13 +147,13 @@
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.55rem 1rem;
+  padding: 0.6rem 1rem;
   background: transparent;
   border: 1px solid var(--card-border);
   border-radius: var(--cyber-radius);
   color: var(--text-secondary);
   cursor: pointer;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -239,13 +239,13 @@
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.45rem 0.9rem;
+  padding: 0.45rem 0.8rem;
   background: transparent;
   border: 1px solid var(--card-border);
   border-radius: var(--cyber-radius);
   color: var(--text-secondary);
   cursor: pointer;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
   transition: var(--transition);
 }
@@ -278,10 +278,39 @@
   flex-shrink: 0;
 }
 
+.chart-type-btns .control-btn {
+  padding: 0.45rem 0.6rem;
+  position: relative;
+}
+
+.chart-type-btns .control-btn.blocked {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-style: dashed;
+}
+
+.chart-type-btns .control-btn.blocked:hover {
+  border-color: var(--card-border);
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.chart-type-btns .control-btn .lock-icon {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  opacity: 0.7;
+}
+
 .secondary-btns {
   display: flex;
   gap: 0.4rem;
   flex-wrap: wrap;
+}
+
+.secondary-btns .control-btn {
+  min-height: 36px;
+  font-size: 0.75rem;
 }
 
 .uf-btns {
@@ -324,7 +353,7 @@
   align-items: center;
   gap: 0.3rem;
   padding: 0.3rem 0.7rem;
-  background: var(--accent-soft);
+  background: transparent;
   border: 1px solid var(--card-border);
   border-radius: var(--cyber-radius);
   color: var(--accent-color);
@@ -713,8 +742,8 @@
 .insight-item {
   display: flex;
   align-items: flex-start;
-  gap: 0.7rem;
-  padding: 0.7rem 1rem;
+  gap: 0.8rem;
+  padding: 0.9rem 1rem;
   border-radius: 8px;
   border: 1px solid var(--card-border);
   background: rgba(255, 255, 255, 0.02);
@@ -833,5 +862,10 @@
 
   .hbar-row {
     grid-template-columns: 70px 1fr 70px;
+  }
+
+  .chart-type-btns .control-btn {
+    min-width: 40px;
+    min-height: 40px;
   }
 }

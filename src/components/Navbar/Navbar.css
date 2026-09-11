@@ -7,13 +7,20 @@
   z-index: 100;
   padding: 1rem 0;
   background: transparent;
-  transition: var(--transition);
+  /* Transição escopada a propriedades baratas; transform fica livre para a animação do modal */
+  transition: padding 0.3s ease, background-color 0.3s ease,
+    border-color 0.3s ease, opacity 0.3s ease;
 }
 
 .navbar.shrunk {
   background: var(--glass-bg);
   border-bottom: 1px solid var(--card-border);
   padding: 0.6rem 0;
+}
+
+.navbar.hidden {
+  pointer-events: none;
+  opacity: 0;
 }
 
 .navbar-content {

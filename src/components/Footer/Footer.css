@@ -13,30 +13,29 @@
 }
 
 .footer-title {
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-size: 2rem;
   font-weight: 800;
-  line-height: 1.2;
-  margin-bottom: 1.5rem;
   background: var(--title-gradient);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-clip: text;
+  margin-bottom: 1rem;
 }
 
 .footer-desc {
-  font-size: clamp(0.85rem, 1.8vw, 1rem);
+  font-size: 0.9rem;
   color: var(--text-secondary);
   line-height: 1.8;
   margin-bottom: 1.5rem;
-  max-width: 480px;
 }
 
 .footer-author-credit {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
   color: var(--accent-color);
-  margin-bottom: 1.2rem;
-  font-family: monospace;
+  margin-bottom: 1.5rem;
 }
 
 .footer-social-icons {
@@ -60,7 +59,6 @@
 
 .social-icon-btn:hover {
   border-color: var(--accent-color);
-  background: var(--accent-soft);
   color: var(--accent-color);
 }
 
@@ -76,7 +74,6 @@
   border: 1px solid var(--card-border);
   border-radius: var(--cyber-radius);
   padding: 1.2rem;
-  margin-top: 1rem;
   overflow: hidden;
 }
 
@@ -135,8 +132,39 @@ html.light-theme .footer-copyright-text {
 }
 
 @media (max-width: 768px) {
+  .footer {
+    padding: 4rem 0 0;
+  }
+
   .footer-content {
     grid-template-columns: 1fr;
     gap: 2rem;
+  }
+
+  .footer-title {
+    font-size: 1.5rem;
+  }
+
+  .footer-desc {
+    font-size: 0.85rem;
+  }
+
+  .shell-btn {
+    min-height: 40px;
+    padding: 0.5rem 0.7rem;
+    font-size: 0.75rem;
+  }
+
+  .close-about-btn {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .terminal-input {
+    font-size: 0.75rem;
+    min-height: 44px;
   }
 }

@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { X, Download, FileText, Image as ImageIcon } from 'lucide-react';
 import html2canvas from 'html2canvas';
@@ -33,9 +32,6 @@ const normalizeLang = (lang: string): string => {
   return ['pt', 'en', 'es'].includes(base) ? base : 'pt';
 };
 
-const escapeHtml = (s: string): string =>
-  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-
 /** Cor de destaque de acordo com o tema. */
 const getAccentColor = (): string =>
   document.documentElement.classList.contains('light-theme') ? '#0891b2' : '#06b6d4';
@@ -52,18 +48,25 @@ const getDocPrintStyles = (accentColor: string): string => `
     font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
-  .doc-pdf-header {
+  .doc-paper {
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .doc-paper-header {
     margin-bottom: 26px;
     padding-bottom: 18px;
     border-bottom: 2px solid ${accentColor};
   }
-  .doc-pdf-title {
+  .doc-paper-title {
     font-size: 23px;
     font-weight: 900;
     letter-spacing: -0.5px;
     color: #1a1a2e;
   }
-  .doc-pdf-subtitle {
+  .doc-paper-subtitle {
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.5px;
@@ -79,6 +82,7 @@ const getDocPrintStyles = (accentColor: string): string => `
     color: ${accentColor};
     margin-bottom: 8px;
   }
+  .doc-summary-heading::before { display: none; }
   .doc-summary-list { list-style: none; }
   .doc-summary-list li {
     font-size: 10.5px;
@@ -98,40 +102,19 @@ const getDocPrintStyles = (accentColor: string): string => `
   }
 `;
 
-/** Monta a "folha A4" com o MESMO conteúdo do preview (resumo), já traduzido. */
-const buildPdfContainer = (doc: DocInfo, subtitle: string): HTMLElement => {
-  const container = document.createElement('div');
-  container.className = 'doc-pdf-container';
-  const sections = doc.summary
-    .map(
-      (s) => `
-        <div class="doc-summary-section">
-          <h3 class="doc-summary-heading">${escapeHtml(s.heading)}</h3>
-          <ul class="doc-summary-list">
-            ${s.items.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}
-          </ul>
-        </div>`
-    )
-    .join('');
-  container.innerHTML = `
-    <div class="doc-pdf-header">
-      <div class="doc-pdf-title">${escapeHtml(doc.name)}</div>
-      <div class="doc-pdf-subtitle">${escapeHtml(subtitle)}</div>
-    </div>
-    <div class="doc-pdf-body">${sections}</div>
-  `;
-  return container;
-};
-
 /**
  * Modal de pré-visualização de documentos — clica no botão, o modal mostra o
  * preview e o "Baixar PDF/PNG" GERA o arquivo na hora (html2canvas + jsPDF),
  * de acordo com o idioma (conteúdo e nome do arquivo) e o tema (cor de
  * destaque). O PDF é ajustado proporcionalmente em A4, em UMA única página.
+ *
+ * A abertura e o fechamento são INSTANTÂNEOS (sem transição), como no CVModal
+ * do manoelja: o clique no botão revela o modal na hora e o fechamento também.
  */
 const DocumentPreviewModal = ({ doc, onClose }: DocumentPreviewModalProps) => {
   const { t, i18n } = useTranslation();
   const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const paperRef = useRef<HTMLDivElement>(null);
   const [isGenerating, setIsGenerating] = useState<'pdf' | 'png' | null>(null);
 
   const handleClose = useCallback(() => onClose(), [onClose]);
@@ -144,24 +127,40 @@ const DocumentPreviewModal = ({ doc, onClose }: DocumentPreviewModalProps) => {
     };
 
     const prevOverflow = document.body.style.overflow;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
     const prevActive = document.activeElement as HTMLElement | null;
 
     window.addEventListener('keydown', handleKeyDown);
+    // Igual ao CVModal (window.scrollTo(0, 0) do manoelja): ao abrir, a página
+    // volta ao topo ANTES de travar o scroll — o modal é fixo no topo do
+    // viewport, então o que aparece atrás dele é o início da página. Como o
+    // `html` tem `scroll-behavior: smooth`, a subida ao topo é animada.
+    window.scrollTo(0, 0);
+    // Trava o scroll em html E body: com `html { overflow-x: clip }`, travar
+    // só o body deixa a barra de rolagem da página visível mas inutilizável.
     document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
     closeBtnRef.current?.focus();
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = prevOverflow;
-      prevActive?.focus?.();
+      document.documentElement.style.overflow = prevHtmlOverflow;
+      // Sem restauração de scroll: como no CVModal, a página permanece no topo
+      // depois de fechar. `preventScroll` é obrigatório aqui: o `focus()` no
+      // botão de origem (lá na seção About) rolaria a página de volta até ele.
+      prevActive?.focus?.({ preventScroll: true });
     };
   }, [doc, handleClose]);
 
   const activeLang = doc ? normalizeLang(i18n.language) : 'pt';
   const baseName = doc ? doc.slug : 'documento';
 
-  const mountPrintCopy = (target: DocInfo): { wrapper: HTMLElement } => {
-    const container = buildPdfContainer(target, t('footer.title'));
+  const mountPrintCopy = (): { wrapper: HTMLElement } | null => {
+    if (!paperRef.current) return null;
+    const container = document.createElement('div');
+    container.className = 'doc-pdf-container';
+    container.innerHTML = paperRef.current.innerHTML;
     const style = document.createElement('style');
     style.textContent = getDocPrintStyles(getAccentColor());
     const wrapper = document.createElement('div');
@@ -177,7 +176,12 @@ const DocumentPreviewModal = ({ doc, onClose }: DocumentPreviewModalProps) => {
   const generateFile = async (kind: 'pdf' | 'png') => {
     if (!doc || isGenerating) return;
     setIsGenerating(kind);
-    const { wrapper } = mountPrintCopy(doc);
+    const copy = mountPrintCopy();
+    if (!copy) {
+      setIsGenerating(null);
+      return;
+    }
+    const { wrapper } = copy;
     try {
       const container = wrapper.querySelector('.doc-pdf-container') as HTMLElement;
       const canvas = await html2canvas(container, {
@@ -217,92 +221,80 @@ const DocumentPreviewModal = ({ doc, onClose }: DocumentPreviewModalProps) => {
 
   return createPortal(
     <>
-      <AnimatePresence>
-        {doc && (
-          <motion.div
-            key={doc.slug}
-            className={`doc-modal-portal${isGenerating ? ' generating' : ''}`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+      {doc && (
+        <div className={`doc-modal-portal${isGenerating ? ' generating' : ''}`}>
+          <div className="doc-modal-backdrop" onClick={handleClose} />
+
+          <div
+            className="doc-modal-container"
+            role="dialog"
+            aria-modal="true"
+            aria-label={doc.name}
           >
-            <motion.div
-              className="doc-modal-backdrop"
-              onClick={handleClose}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            />
-
-            <motion.div
-              className="doc-modal-container"
-              role="dialog"
-              aria-modal="true"
-              aria-label={doc.name}
-              initial={{ opacity: 0, scale: 0.96, y: 16 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.96, y: 16 }}
-              transition={{ duration: 0.25, ease: 'easeOut' }}
-            >
-              <div className="doc-modal-header">
-                <div className="doc-modal-title-group">
-                  <FileText size={18} />
-                  <h3 className="doc-modal-title">{doc.name}</h3>
-                  <span className="doc-modal-tag">{activeLang.toUpperCase()}</span>
-                </div>
-
-                <div className="doc-modal-actions">
-                  <button
-                    type="button"
-                    className="doc-control-btn doc-download-btn"
-                    onClick={() => generateFile('pdf')}
-                    disabled={isGenerating !== null}
-                    title={t('about.download_pdf')}
-                  >
-                    <Download size={16} />
-                    <span>{t('about.download_pdf')}</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="doc-control-btn"
-                    onClick={() => generateFile('png')}
-                    disabled={isGenerating !== null}
-                    title={t('about.download_png')}
-                  >
-                    <ImageIcon size={16} />
-                    <span>{t('about.download_png')}</span>
-                  </button>
-                  <button
-                    ref={closeBtnRef}
-                    type="button"
-                    className="doc-control-btn doc-close-btn"
-                    onClick={handleClose}
-                    aria-label={t('about.close_modal')}
-                    title={t('about.close_modal')}
-                  >
-                    <X size={18} />
-                  </button>
-                </div>
+            <div className="doc-modal-header">
+              <div className="doc-modal-title-group">
+                <FileText size={18} />
+                <h3 className="doc-modal-title">{doc.name}</h3>
+                <span className="doc-modal-tag">{activeLang.toUpperCase()}</span>
               </div>
 
-              <div className="doc-modal-body doc-summary-body">
-                {doc.summary.map((section) => (
-                  <div className="doc-summary-section" key={section.heading}>
-                    <h4 className="doc-summary-heading">{section.heading}</h4>
-                    <ul className="doc-summary-list">
-                      {section.items.map((item, i) => (
-                        <li key={i}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
+              <div className="doc-modal-actions">
+                <button
+                  type="button"
+                  className="doc-control-btn doc-download-btn"
+                  onClick={() => generateFile('pdf')}
+                  disabled={isGenerating !== null}
+                  title={t('about.download_pdf')}
+                >
+                  <Download size={16} />
+                  <span>{t('about.download_pdf')}</span>
+                </button>
+                <button
+                  type="button"
+                  className="doc-control-btn"
+                  onClick={() => generateFile('png')}
+                  disabled={isGenerating !== null}
+                  title={t('about.download_png')}
+                >
+                  <ImageIcon size={16} />
+                  <span>{t('about.download_png')}</span>
+                </button>
+                <button
+                  ref={closeBtnRef}
+                  type="button"
+                  className="doc-control-btn doc-close-btn"
+                  onClick={handleClose}
+                  aria-label={t('about.close_modal')}
+                  title={t('about.close_modal')}
+                >
+                  <X size={18} />
+                </button>
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </div>
+
+            <div className="doc-modal-body doc-summary-body">
+              <div className="doc-paper" ref={paperRef}>
+                <div className="doc-paper-header">
+                  <div className="doc-paper-title">{doc.name}</div>
+                  <div className="doc-paper-subtitle">{t('footer.title')}</div>
+                </div>
+                <div className="doc-paper-content">
+                  {doc.summary.map((section) => (
+                    <div className="doc-summary-section" key={section.heading}>
+                      <h4 className="doc-summary-heading">{section.heading}</h4>
+                      <ul className="doc-summary-list">
+                        {section.items.map((item, i) => (
+                          <li key={i}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {doc && isGenerating && (
         <div className="doc-fullscreen-loading">

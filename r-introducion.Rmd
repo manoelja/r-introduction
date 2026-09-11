@@ -1,0 +1,279 @@
+---
+title: "Análise de Dados de COVID-19 — Brasil e Goiânia (2021)"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+```
+
+```{r libraries, echo=FALSE, warning = FALSE, message=FALSE}
+
+library(readxl)
+library(dplyr)
+library(tidyr)
+library(lubridate)
+library(ggplot2)
+library(tidyverse)
+
+```
+
+## Nota metodológica
+
+As análises seguem as definições operacionais abaixo (Ministério da Saúde — Saúde Brasil 2020/2021):
+
+- **Itens 6 a 8 (Goiânia):** "casos e óbitos acumulados ocorridos ao longo de 2021" correspondem à soma dos casos novos e dos óbitos novos notificados semana a semana, de janeiro a dezembro de 2021. Não se utilizam as colunas "Casos Acumulados" e "Óbitos Acumulados" da base, pois essas acumulam desde o início da pandemia (março de 2020).
+- **Itens 7 e 8 (gráficos):** gerados apenas com os dados filtrados para o município de Goiânia (GO).
+- **Itens 9 e 10:** "Considerando os dados do Brasil (todas as UF)" — as análises são realizadas no nível nacional, com todas as UF.
+
+## Análise de dados do painel COVID-19
+
+Nesta atividade são analisados os dados de casos e óbitos de COVID-19 notificados no ano de 2021, obtidos do painel do Ministério da Saúde. A base cobre todos os municípios do território nacional: os itens 1 a 5 utilizam a base completa, os itens 6 a 8 restringem a análise ao município de Goiânia (GO) e os itens 9 e 10 retomam o nível Brasil.
+
+## Item 1. Importe os dados de COVID-19 do ano de 2021, obtidos no site do Ministério da Saúde, ou baixada da página do curso.
+
+```{r item1, echo=TRUE}
+# Carregamento do dataset
+# Nota: O arquivo original 'c470e85a-4472-42c6-a582-c91a26954359.xlsx' foi 
+# renomeado para 'dados-covid.xlsx' para facilitar a organização do projeto.
+dados_covid <- read_excel("dados-covid.xlsx")
+```
+
+# Considerando a base toda (todo o território nacional)
+
+## Item 2. Realize a limpeza dos dados de todas as colunas (*NA's, Datas, etc*). Use as funções e as ferramentas trabalhadas em aula.
+
+```{r item2, echo=TRUE}
+
+dados_covid_limpo <- dados_covid %>%
+  # 1) Padronizar nomes das colunas
+  rename(
+    casos_acumulados  = `Casos Acumulados`,
+    casos_novos       = `Casos novos notificados na semana epidemiológica`,
+    obitos_acumulados = `Óbitos Acumulados`,
+    obitos_novos      = `Óbitos novos notificados na semana epidemiológica`,
+    uf                = `UF`,
+    municipio         = `Município`,
+  `metro/interior`    = `Metro/Interior`,
+    ano_semana        = `Ano_Semana`,
+    info              = `Info`
+  ) %>%  
+
+   # 2) Remover registros sem Município
+  filter(!is.na(municipio)) %>% 
+  
+  # 3) Limpar espaços extras em textos
+  mutate(across(where(is.character), str_trim)) %>% 
+  
+  # 4) Corrigir valores negativos de casos novos
+  mutate(casos_novos = pmax(casos_novos, 0, na.rm = TRUE)) %>% 
+  
+  # 5) Extrair Semana e Ano a partir de "ano_semana" (ex: "1/2021")
+  separate(ano_semana, into = c("semana", "ano"), sep = "/", convert = TRUE, remove = FALSE) %>% 
+  
+  # 6) Filtrar apenas o ano de 2021 (semanas 1 a 52)
+  filter(ano == 2021, semana <= 52) %>% 
+  
+  # 7) Garantir registros únicos
+  distinct()
+# Cria a tabela de mapeamento
+de_para_colunas <- data.frame(
+  `Nome Antigo` = c(
+    "Info",
+    "UF",
+    "Município",
+    "Metro/Interior",
+    "Ano_Semana",
+    "Casos Acumulados",
+    "Casos novos notificados na semana epidemiológica",
+    "Óbitos Acumulados",
+    "Óbitos novos notificados na semana epidemiológica",
+    "-" ,
+    "-"
+  ),
+  `Nome Novo` = c(
+    "info",
+    "uf",
+    "municipio",
+    "metro_interior",
+    "ano_semana",
+    "casos_acumulados",
+    "casos_novos",
+    "obitos_acumulados",
+    "obitos_novos",
+    "semana",
+    "ano"
+  )
+)
+
+  
+  # Exibir no console
+print(de_para_colunas)
+
+glimpse(dados_covid_limpo)
+
+```
+
+
+## Item 3. Use a função "factor" para categorizar a coluna "Metro/Interior" no data frame.
+
+
+```{r item3, echo=TRUE}
+
+# Categorizar a coluna "metro/interior" como fator
+dados_covid_limpo <- dados_covid_limpo %>%
+  mutate(`metro/interior` = factor(`metro/interior`))
+
+# Níveis da variável
+levels(dados_covid_limpo$`metro/interior`)
+table(dados_covid_limpo$`metro/interior`)
+
+```
+
+## Item 4. Realize um resumo dos dados utilizando a função summary.
+
+```{r item4, echo=TRUE}
+
+summary(dados_covid_limpo)
+
+```
+
+## Item 5. Filtre os dados para a cidade de Goiânia e mostre as 10 primeiras linhas do data frame.
+
+```{r item5, echo=TRUE}
+
+goiania <- dados_covid_limpo %>%
+  filter(municipio == "Goiânia", uf == "GO") %>%
+  select(-info, -`metro/interior`, -`ano_semana`) # <-- Remove as colunas 'info' e 'metro/interior'
+
+# 2) Exibir as 10 primeiras linhas na tabela
+knitr::kable(
+  head(goiania, 10),
+  caption = "Goiânia (GO) - 10 primeiras linhas"
+)
+
+```
+
+# Considerando os dados filtrados de Goiânia
+
+## Item 6. Calcule e exiba o número de casos e de óbitos acumulados de COVID-19 ocorridos ao longo de 2021.
+
+```{r item6, echo=TRUE}
+
+# Acumulados ao longo de 2021: soma dos casos novos e óbitos novos
+# notificados semana a semana, de janeiro a dezembro de 2021.
+# NOTA: Não se usa as colunas "Casos Acumulados" e "Óbitos Acumulados"
+# da base, pois essas são acumuladas desde o início da pandemia (mar/2020).
+casos_acumulados_2021 <- sum(goiania$casos_novos)
+obitos_acumulados_2021 <- sum(goiania$obitos_novos)
+
+# Tabela-resumo
+resumo_goiania <- data.frame(
+  Indicador = c("Casos acumulados ao longo de 2021",
+                "Óbitos acumulados ao longo de 2021"),
+  Valor = c(casos_acumulados_2021, obitos_acumulados_2021)
+)
+knitr::kable(resumo_goiania,
+             caption = "Casos e óbitos de COVID-19 acumulados em Goiânia ao longo de 2021")
+
+```
+
+## Item 7. Gere e exiba um gráfico de linha de casos acumulados de COVID-19 por semana em 2021.
+
+```{r item7, echo=TRUE}
+
+# Acumular casos novos semana a semana ao longo de 2021
+# (não usar a coluna "casos_acumulados" da base, que é desde o início da pandemia)
+goiania_casos_acum <- goiania %>%
+  arrange(semana) %>%
+  mutate(casos_acum_2021 = cumsum(casos_novos))
+
+# Gráfico de linha: casos acumulados por semana em 2021
+ggplot(goiania_casos_acum, aes(x = semana, y = casos_acum_2021)) +
+  geom_line(color = "#1f77b4", linewidth = 0.9) +
+  geom_point(color = "#1f77b4", size = 1.2) +
+  labs(title = "Casos acumulados de COVID-19 por semana - Goiânia (2021)",
+       x = "Semana epidemiológica (2021)", y = "Casos acumulados em 2021") +
+  theme_minimal()
+
+```
+
+## Item 8. Gere e exiba um gráfico de linha de óbitos acumulados de COVID-19 por semana em 2021.
+
+```{r item8, echo=TRUE}
+
+# Acumular óbitos novos semana a semana ao longo de 2021
+# (não usar a coluna "obitos_acumulados" da base, que é desde o início da pandemia)
+goiania_obitos_acum <- goiania %>%
+  arrange(semana) %>%
+  mutate(obitos_acum_2021 = cumsum(obitos_novos))
+
+# Gráfico de linha: óbitos acumulados por semana em 2021
+ggplot(goiania_obitos_acum, aes(x = semana, y = obitos_acum_2021)) +
+  geom_line(color = "#d62728", linewidth = 0.9) +
+  geom_point(color = "#d62728", size = 1.2) +
+  labs(title = "Óbitos acumulados de COVID-19 por semana - Goiânia (2021)",
+       x = "Semana epidemiológica (2021)", y = "Óbitos acumulados em 2021") +
+  theme_minimal()
+
+```
+
+# Considerando os dados do Brasil (todas as UF)
+
+## Item 9. Crie uma nova coluna denominada "Regiao", a partir da coluna "UF". Agrupe as UF segundo suas regiões específicas: Norte, Nordeste, Centro-Oeste, Sul e Sudeste.
+
+```{r item9, echo=TRUE}
+
+# Criar a coluna "Regiao" a partir da UF
+dados_covid_limpo <- dados_covid_limpo %>%
+  mutate(
+    regiao = factor(
+      recode(uf,
+             AC = "Norte", AM = "Norte", AP = "Norte", PA = "Norte",
+             RO = "Norte", RR = "Norte", TO = "Norte",
+             AL = "Nordeste", BA = "Nordeste", CE = "Nordeste", MA = "Nordeste",
+             PB = "Nordeste", PE = "Nordeste", PI = "Nordeste", RN = "Nordeste",
+             SE = "Nordeste",
+             DF = "Centro-Oeste", GO = "Centro-Oeste", MS = "Centro-Oeste",
+             MT = "Centro-Oeste",
+             PR = "Sul", RS = "Sul", SC = "Sul",
+             ES = "Sudeste", MG = "Sudeste", RJ = "Sudeste", SP = "Sudeste",
+             .default = NA_character_),
+      levels = c("Norte", "Nordeste", "Centro-Oeste", "Sul", "Sudeste")
+    )
+  )
+
+# Conferir a correspondência UF -> Região
+knitr::kable(dados_covid_limpo %>% distinct(uf, regiao) %>% arrange(uf),
+             caption = "Correspondência entre UF e Região")
+
+```
+
+## Item 10. Gere e exiba um gráfico de barras empilhadas de óbitos acumulados de COVID-19 por semana em 2021. Cada barra empilhará as regiões do país: Norte, Nordeste, Centro-Oeste, Sul e Sudeste.
+
+```{r item10, echo=TRUE}
+
+# Óbitos novos por semana e região ao longo de 2021
+obitos_novos_por_regiao <- dados_covid_limpo %>%
+  group_by(regiao, semana) %>%
+  summarise(obitos_novos_sem = sum(obitos_novos), .groups = "drop")
+
+# Calcular acumulado de óbitos novos ao longo de 2021, por região
+obitos_acum_por_regiao <- obitos_novos_por_regiao %>%
+  group_by(regiao) %>%
+  arrange(semana) %>%
+  mutate(obitos_acum_2021 = cumsum(obitos_novos_sem)) %>%
+  ungroup()
+
+# Gráfico de barras empilhadas por região
+ggplot(obitos_acum_por_regiao, aes(x = semana, y = obitos_acum_2021, fill = regiao)) +
+  geom_bar(stat = "identity", width = 0.7) +
+  labs(title = "Óbitos acumulados de COVID-19 por semana em 2021, por região",
+       x = "Semana epidemiológica (2021)", y = "Óbitos acumulados em 2021",
+       fill = "Região") +
+  scale_fill_brewer(palette = "Set2") +
+  theme_minimal()
+
+```

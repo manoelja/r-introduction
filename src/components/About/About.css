@@ -5,6 +5,11 @@
   align-items: start;
 }
 
+.about-info,
+.about-education {
+  min-width: 0;
+}
+
 .about-card-main {
   padding: 2rem;
   padding-top: 2.5rem;
@@ -28,6 +33,13 @@
 
 .about-card-header-label svg {
   opacity: 1;
+}
+
+.about-text {
+  font-size: clamp(0.85rem, 1.8vw, 1rem);
+  color: var(--text-secondary);
+  line-height: 1.9;
+  margin-bottom: 1.5rem;
 }
 
 .about-content-wrapper {
@@ -328,14 +340,23 @@
   flex-shrink: 0;
 }
 
+.doc-preview-btn span {
+  white-space: nowrap;
+}
+
 .doc-preview-btn:hover {
   border-color: var(--accent-color);
   box-shadow: var(--shadow-lg), 0 0 0 1px rgba(6, 182, 212, 0.1);
   transform: translateY(-3px);
+  color: rgba(6, 182, 212, 0.8);
 }
 
 .doc-preview-btn:hover::before {
   opacity: 1;
+}
+
+.doc-preview-btn:active {
+  transform: translateY(-1px);
 }
 
 @media (max-width: 768px) {

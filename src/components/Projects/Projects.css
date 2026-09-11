@@ -228,6 +228,10 @@
     font-size: 1.6rem;
   }
 
+  .summary-label {
+    font-size: 0.65rem;
+  }
+
   .projects-grid {
     grid-template-columns: 1fr;
   }

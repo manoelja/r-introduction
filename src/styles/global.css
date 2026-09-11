@@ -7,7 +7,7 @@
   --accent-hover: #0891b2;
   --text-primary: #ffffff;
   --text-secondary: #a1a1aa;
-  --card-bg: transparent;
+  --card-bg: rgba(15, 12, 25, 0.8);
   --card-border: rgba(6, 182, 212, 0.18);
   --glass-bg: rgba(8, 6, 16, 0.9);
 
@@ -63,7 +63,7 @@ html.light-theme {
   --accent-hover: #0e7490;
   --text-primary: #164e63;
   --text-secondary: #155e75;
-  --card-bg: transparent;
+  --card-bg: rgba(255, 255, 255, 0.9);
   --card-border: rgba(8, 145, 178, 0.18);
   --glass-bg: rgba(236, 254, 255, 0.95);
   --lavender: #0d9488;
@@ -233,6 +233,20 @@ body {
 /* Prevent layout shift from lazy loading */
 main.container {
   min-height: 100vh;
+}
+
+/* Com um documento aberto (Resumo Técnico / Resultados da Análise), o conteúdo
+   da página sai de cena atrás do modal: no CVModal do manoelja o hero já fica
+   inteiro dentro da área do modal; aqui o hero é um grid de largura total em
+   2 colunas e vazaria pelas laterais, então escondemos o conteúdo. O modal é
+   um portal no body, fora de main, e o fundo animado continua visível. */
+main {
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+main.doc-open {
+  opacity: 0;
+  visibility: hidden;
 }
 
 /* Background blobs */

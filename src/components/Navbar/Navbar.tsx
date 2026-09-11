@@ -5,7 +5,11 @@ import { Sun, Moon, Languages, ChevronDown, Menu, X } from 'lucide-react';
 import { useActiveSection } from '../../hooks/useActiveSection';
 import './Navbar.css';
 
-const Navbar = () => {
+interface NavbarProps {
+  isDocOpen?: boolean;
+}
+
+const Navbar = ({ isDocOpen = false }: NavbarProps) => {
   const { t, i18n } = useTranslation();
   const [isLight, setIsLight] = useState(localStorage.getItem('theme') === 'light');
   const [isScrolled, setIsScrolled] = useState(false);
@@ -73,10 +77,10 @@ const Navbar = () => {
 
   return (
     <motion.nav
-      className={`navbar ${isScrolled ? 'shrunk' : ''}`}
+      className={`navbar ${isScrolled ? 'shrunk' : ''}${isDocOpen ? ' hidden' : ''}`}
       initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5 }}
+      animate={{ y: isDocOpen ? -120 : 0 }}
+      transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
     >
       <div className="container navbar-content">
         <div className="logo">
