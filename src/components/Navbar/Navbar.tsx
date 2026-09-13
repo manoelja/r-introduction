@@ -54,6 +54,32 @@ const Navbar = ({ isDocOpen = false }: NavbarProps) => {
     root.classList.remove('no-theme-transition');
   }, [isLight]);
 
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      const scrollY = window.scrollY;
+
+      const preventScroll = (e: Event) => {
+        if ((e.target as HTMLElement).closest('.mobile-drawer')) return;
+        e.preventDefault();
+      };
+      document.addEventListener('touchmove', preventScroll, { passive: false });
+      document.addEventListener('wheel', preventScroll, { passive: false });
+
+      return () => {
+        window.scrollTo(0, scrollY);
+        document.removeEventListener('touchmove', preventScroll);
+        document.removeEventListener('wheel', preventScroll);
+      };
+    }
+  }, [isMobileMenuOpen]);
+
+  const scrollToSection = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
   };
@@ -93,6 +119,7 @@ const Navbar = ({ isDocOpen = false }: NavbarProps) => {
               <a
                 href={`#${link.id}`}
                 className={activeSection === link.id ? 'active' : ''}
+                onClick={(e) => { e.preventDefault(); scrollToSection(link.id); }}
               >
                 {link.label}
               </a>
@@ -194,7 +221,11 @@ const Navbar = ({ isDocOpen = false }: NavbarProps) => {
                     <a
                       href={`#${link.id}`}
                       className={activeSection === link.id ? 'active' : ''}
-                      onClick={() => setIsMobileMenuOpen(false)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsMobileMenuOpen(false);
+                        setTimeout(() => scrollToSection(link.id), 100);
+                      }}
                     >
                       {link.label}
                     </a>
