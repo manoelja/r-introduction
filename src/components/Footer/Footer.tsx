@@ -55,7 +55,7 @@ export default function Footer() {
 
             <div className="footer-social-icons">
               <motion.a
-                href="https://github.com/manoelja/r-introducion"
+                href="https://github.com/manoelja/r-introduction"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-icon-btn"

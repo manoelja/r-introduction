@@ -64,8 +64,8 @@ Enquanto você navega, o fundo da página tem uma **animação animada** inspira
 Precisa ter o [Node.js](https://nodejs.org/) instalado (versão 18 ou superior).
 
 ```bash
-git clone https://github.com/manoelja/r-introducion.git
-cd r-introducion
+git clone https://github.com/manoelja/r-introduction.git
+cd r-introduction
 npm install
 npm run dev
 ```

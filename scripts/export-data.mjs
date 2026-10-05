@@ -2,7 +2,7 @@
  * scripts/export-data.mjs
  *
  * Lê `dados-covid.xlsx` (casos e óbitos de COVID-19 — 2021, Ministério da Saúde),
- * replica a limpeza feita no `r-introducion.Rmd` (itens 2, 3 e 9) e gera
+ * replica a limpeza feita no `r-introduction.Rmd` (itens 2, 3 e 9) e gera
  * `src/data/covid.ts` com os dados agregados consumidos pelo dashboard.
  *
  * Uso: npm run data:export
@@ -49,7 +49,7 @@ const toRecord = (r) => ({
 });
 
 // ---------------------------------------------------------------------------
-// 2. Limpeza (espelha os itens 2, 3 e 9 do r-introducion.Rmd)
+// 2. Limpeza (espelha os itens 2, 3 e 9 do r-introduction.Rmd)
 // ---------------------------------------------------------------------------
 const UF_REGIAO = {
   AC: 'Norte', AM: 'Norte', AP: 'Norte', PA: 'Norte', RO: 'Norte', RR: 'Norte', TO: 'Norte',

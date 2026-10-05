@@ -116,9 +116,9 @@ const About = ({ previewDoc, setPreviewDoc }: AboutProps) => {
             heading: L('Como os dados chegam ao site', 'How data reaches the site', 'Cómo llegan los datos al sitio'),
             items: [
               L(
-                'A análise original foi feita em R (r-introducion.Rmd); um script Node replica a mesma limpeza e gera os dados do site.',
-                'The original analysis was done in R (r-introducion.Rmd); a Node script replicates the same cleaning and generates the site data.',
-                'El análisis original se hizo en R (r-introducion.Rmd); un script Node replica la misma limpieza y genera los datos del sitio.',
+                'A análise original foi feita em R (r-introduction.Rmd); um script Node replica a mesma limpeza e gera os dados do site.',
+                'The original analysis was done in R (r-introduction.Rmd); a Node script replicates the same cleaning and generates the site data.',
+                'El análisis original se hizo en R (r-introduction.Rmd); un script Node replica la misma limpieza y genera los datos del sitio.',
               ),
               L(
                 'Pipeline: R → script Node (export-data.mjs) → src/data/covid.ts → dashboard. Basta rodar npm run data:export.',

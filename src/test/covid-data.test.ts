@@ -36,7 +36,7 @@ describe('cleaningStats (Item 2)', () => {
 });
 
 describe('summaryStats (Item 6 — Goiânia 2021)', () => {
-  it('totais de Goiânia conferem com o r-introducion.Rmd', () => {
+  it('totais de Goiânia conferem com o r-introduction.Rmd', () => {
     const g = summaryStats.goiania;
     expect(g.casosAcumulados).toBe(216_065);
     expect(g.obitosAcumulados).toBe(6_991);
